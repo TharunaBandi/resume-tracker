@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Resume Score Checker</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #22c55e;
+      --warning: #facc15;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body { background: var(--bg); color: var(--text); }
+
+    .wrapper { max-width: 1100px; margin: auto; padding: 24px; }
+
+    header { text-align: center; margin-bottom: 32px; }
+    header h1 { font-size: 2rem; font-weight: 700; }
+    header p { color: var(--muted); margin-top: 8px; }
+
+    .card {
+      background: var(--card);
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+      margin-bottom: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .input-block { display: flex; flex-direction: column; }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      min-height: 32px; /* ensures both columns start at same vertical level */
+    }
+
+    .title-row h3 { font-size: 1rem; font-weight: 600; }
+
+    /* Small neat upload button */
+    .upload-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #eef2ff;
+      color: #1e40af;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .upload-btn:hover { background: #e0e7ff; }
+
+    textarea {
+      width: 100%;
+      min-height: 240px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    textarea:focus { outline: none; border-color: var(--primary); }
+
+    button {
+      width: 100%;
+      margin-top: 28px;
+      padding: 15px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(37,99,235,0.45);
+    }
+
+    .result { display: none; }
+
+    .score-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .score { font-size: 3rem; font-weight: 700; }
+
+    .badge {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress { height: 100%; width: 0; transition: width 0.6s ease; }
+
+    .tips { margin-top: 22px; }
+    .tips ul { padding-left: 20px; margin-top: 10px; }
+    .tips li { margin-bottom: 8px; color: var(--muted); }
+
+    footer { text-align: center; margin-top: 30px; color: var(--muted); font-size: 14px; }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .score { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <header>
+    <h1>ATS Resume Score Checker</h1>
+    <p>Analyze how well your resume performs with Applicant Tracking Systems</p>
+  </header>
+
+  <div class="card">
+    <div class="grid">
+
+      <!-- Resume -->
+      <div class="input-block">
+        <div class="title-row">
+          <h3>Resume Content</h3>
+          <label for="resumeFile" class="upload-btn">Upload PDF</label>
+        </div>
+        <input type="file" id="resumeFile" accept="application/pdf" hidden />
+        <textarea id="resumeText" placeholder="Your resume text will appear here after upload..."></textarea>
+      </div>
+
+      <!-- Job Description -->
+      <div class="input-block">
+        <div class="title-row">
+          <h3>Job Description (Optional)</h3>
+          <span style="width:72px;"></span>
+        </div>
+        <textarea id="jobText" placeholder="Paste job description or role keywords..."></textarea>
+      </div>
+
+    </div>
+
+    <button onclick="checkATS()">Check ATS Score</button>
+  </div>
+
+  <div class="card result" id="result">
+    <div class="score-box">
+      <div class="score" id="score">0%</div>
+      <div class="badge" id="badge">Status</div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="tips">
+      <h3>Improvement Suggestions</h3>
+      <ul id="tipsList"></ul>
+    </div>
+  </div>
+
+  <footer>Built with HTML, CSS & JavaScript | Resume Project</footer>
+
+</div>
+
+<script>
+  // PDF Upload & Read
+  document.getElementById('resumeFile').addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(item => item.str).join(' ') + ' ';
+    }
+
+    document.getElementById('resumeText').value = text;
+  });
+
+  function checkATS() {
+    const resume = resumeText.value.toLowerCase();
+    const job = jobText.value.toLowerCase();
+
+    if (!resume.trim()) {
+      alert('Please upload a resume first');
+      return;
+    }
+
+    let score = 0;
+    let tips = [];
+
+    resume.length > 1000 ? score += 20 : tips.push('Add more detailed content to your resume');
+
+    const sections = ['experience', 'education', 'skills', 'projects'];
+    const count = sections.filter(s => resume.includes(s)).length;
+    score += count * 7.5;
+    if (count < sections.length) tips.push('Include standard sections like Experience, Skills, Education');
+
+    if (job.trim()) {
+      const words = job.split(/\W+/).filter(w => w.length > 3);
+      const matches = words.filter(w => resume.includes(w)).length;
+      const keywordScore = Math.min(30, (matches / words.length) * 30);
+      score += keywordScore;
+      if (keywordScore < 15) tips.push('Add more job-related keywords');
+    } else {
+      score += 15;
+      tips.push('Add a job description for better ATS analysis');
+    }
+
+    !resume.includes('|') ? score += 20 : tips.push('Avoid tables, columns, and special symbols');
+
+    score = Math.min(100, Math.round(score));
+
+    result.style.display = 'block';
+    document.getElementById('score').textContent = score + '%';
+    progress.style.width = score + '%';
+
+    if (score >= 75) {
+      badge.textContent = 'Good – ATS Friendly';
+      badge.style.background = 'var(--success)';
+      progress.style.background = 'var(--success)';
+    } else if (score >= 50) {
+      badge.textContent = 'Average – Needs Improvement';
+      badge.style.background = 'var(--warning)';
+      progress.style.background = 'var(--warning)';
+    } else {
+      badge.textContent = 'Weak – Not ATS Friendly';
+      badge.style.background = 'var(--danger)';
+      progress.style.background = 'var(--danger)';
+    }
+
+    tipsList.innerHTML = '';
+    tips.forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      tipsList.appendChild(li);
+    });
+  }
+</script>
+
+</body>
+</html>
