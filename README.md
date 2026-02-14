@@ -26,7 +26,7 @@ Features
 📱 Responsive User Interface
 
 
-🛠️ Tech Stack
+Tech Stack
 
 HTML5 – Application structure
 
