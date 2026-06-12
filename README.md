@@ -1,37 +1,76 @@
-Resume Tracker is a browser-based ATS (Applicant Tracking System) Resume Score Checker that analyzes a candidate’s resume against a job description and calculates a keyword-based match score.
+# 📄 ATS Resume Tracker
 
-The application extracts text from uploaded PDF resumes, compares it with job description keywords, and provides an estimated ATS score along with missing keyword insights.
+A browser-based ATS (Applicant Tracking System) Resume Score Checker that analyzes your resume against a job description and gives you a keyword match score — entirely client-side, no backend needed.
 
-This project is built entirely using HTML, CSS, and JavaScript in a single file, demonstrating strong frontend logic implementation without any backend dependency.
+> 🖥️ Runs locally — see setup instructions below.
 
+---
 
-Features
+## 📸 Screenshots
 
-📤 Upload Resume (PDF format)
+> ![Screenshots](ats.png)
 
-📝 Enter or Paste Job Description
+---
 
-🔎 Automatic Keyword Extraction
+## ✨ Features
 
-📊 ATS Match Score Calculation
+- 📤 **Upload Resume** — Accepts PDF resumes directly in the browser
+- 📝 **Paste Job Description** — Enter any JD to compare against
+- 🔎 **Keyword Extraction** — Automatically extracts relevant keywords from the JD
+- 📊 **ATS Match Score** — Calculates a percentage match between your resume and JD
+- ✅ **Matched Keywords** — Shows which keywords your resume already contains
+- ❌ **Missing Keywords** — Highlights keywords your resume is missing
+- 💡 **Improvement Suggestions** — Recommends what to add to improve your score
+- ⚡ **Fully Client-Side** — No data is uploaded to any server; everything runs in your browser
+- 📱 **Responsive UI** — Works on desktop and mobile
 
-✅ Display Matched Keywords
+---
 
-❌ Highlight Missing Keywords
+## 🛠️ Tech Stack
 
-💡 Suggest Resume Improvements
+| Technology     | Purpose                            |
+|----------------|------------------------------------|
+| HTML5          | Application structure              |
+| CSS3           | UI design and layout               |
+| JavaScript     | Keyword extraction & scoring logic |
+| PDF.js (CDN)   | Extracts text from uploaded PDFs   |
 
-⚡ Fully Client-Side Application
+> Built as a **single HTML file** — no build tools, no dependencies to install.
 
-📱 Responsive User Interface
+---
 
+## 🚀 Getting Started
 
-Tech Stack
+### Run Locally
 
-HTML5 – Application structure
+```bash
+git clone https://github.com/TharunaBandi/resume-tracker.git
+cd resume-tracker/Resume\ Tracker
+```
 
-CSS3 (Internal Styling) – UI design and layout
+Then simply open `index.html` in your browser — that's it! No build tools or installations needed.
 
-JavaScript (Internal Script) – Keyword extraction & scoring logic
+---
 
-PDF.js (CDN) – PDF text extraction
+## 📖 How It Works
+
+1. **Upload** your resume in PDF format
+2. **Paste** the job description you're applying for
+3. Click **Analyze**
+4. PDF.js extracts the text from your resume
+5. The app compares resume text against JD keywords
+6. You get an **ATS score**, matched keywords, and missing keywords
+
+---
+
+## 💡 Why This Project?
+
+Many companies use ATS software to filter resumes before a human ever reads them. This tool helps job seekers understand how well their resume matches a job description and what keywords to add to improve their chances of getting past automated screening.
+
+---
+
+## 👩‍💻 Author
+
+**Bandi Tharuna Sri**
+- GitHub: [@TharunaBandi](https://github.com/TharunaBandi)
+- Email: banditharuna@gmail.com
